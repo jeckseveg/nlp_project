@@ -9,6 +9,7 @@ def main(spark):
     data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
+    data = spark.sql('SELECT com from data')
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
     # data.createOrReplaceTempView('data')
     # # Filter out songs not in the top 500 most popular
@@ -35,7 +36,7 @@ def main(spark):
     # data.repartition(10000, 'recording_id')  # is partitionBy recording_msid necessary/useful?
     # data.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
     # print('asdf')
-    
+
     data.show(10)
 
 
