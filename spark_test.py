@@ -44,7 +44,9 @@ def main(spark):
     df1 = with_column_index(df1)
     df2 = with_column_index(df2)
     final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex").select('text', 'label')
-    test = final.select('label')['TOXICITY']
+    test = final.select('label', get_json_object(df.label, 'TOXICITY').alias('toxic'), get_json_object(df.label, 'SEVERE_TOXICITY').alias('severe_toxic'),
+                        get_json_object(df.label, 'OBSCENE').alias('obscene'), get_json_object(df.label, 'INFLAMMATORY').alias('threat'),
+                        get_json_object(df.label, 'INSULT').alias('insult'), get_json_object(df.label, 'PROFANITY').alias('identity_hate'))
     test.show()
     # final.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
 
