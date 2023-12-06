@@ -6,7 +6,7 @@ import numpy as np
 
 
 def main(spark):
-    data = spark.read.option("multiline","true").json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
+    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
     df1 = data.select(explode(col('posts.com')).alias('normalized'))
