@@ -44,7 +44,8 @@ def main(spark):
     df1 = with_column_index(df1)
     df2 = with_column_index(df2)
     final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex").select('text', 'label')
-    final.show(1, False)
+    test = final.select('label')['TOXICITY']
+    test.show()
     # final.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
 
 # Only enter this block if we're in main
