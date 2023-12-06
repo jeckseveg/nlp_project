@@ -56,8 +56,8 @@ def main(spark):
         .withColumn("obscene", round(test["obscene_"]).cast('integer')).withColumn("insult", round(test["insult_"]).cast('integer'))\
         .withColumn("threat", floor(test["threat_"]).cast('integer')).withColumn("identity_hate", floor(test["identity_hate_"]).cast('integer'))
     test = test.select('text', 'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
-    test = test.withColumn("label", array('text', 'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'))\
-        .drop('text', 'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
+    test = test.withColumn("label", array('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'))\
+        .drop('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
     test.show()
     # final.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
 
