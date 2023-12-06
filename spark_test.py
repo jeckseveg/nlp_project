@@ -39,8 +39,8 @@ def main(spark):
     # print('asdf')
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
     df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
-    df1.tail(10).show()
-    df2.tail(10).show()
+    print(df1.tail(10))
+    print(df2.tail(10))
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
