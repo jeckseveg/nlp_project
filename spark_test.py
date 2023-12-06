@@ -39,7 +39,7 @@ def main(spark):
     # print('asdf')
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
     df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
-    df1 = df1.join(df2, on='index', how='inner')
+    df1 = df1.join(df2, df1.index=df2.index, 'inner')
     df1.show(10)
     print(df1.tail(2))
 
