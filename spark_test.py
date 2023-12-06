@@ -43,7 +43,7 @@ def main(spark):
     df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
     df1 = with_column_index(df1)
     df2 = with_column_index(df2)
-    final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex")
+    final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex").select('text', 'label')
     final.show()
 
 # Only enter this block if we're in main
