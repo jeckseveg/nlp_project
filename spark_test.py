@@ -44,7 +44,7 @@ def main(spark):
     df1 = with_column_index(df1)
     df2 = with_column_index(df2)
     final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex")
-    final.show(final.count(), False)
+    final.show()
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
