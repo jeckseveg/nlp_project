@@ -37,8 +37,8 @@ def main(spark):
     # data.repartition(10000, 'recording_id')  # is partitionBy recording_msid necessary/useful?
     # data.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
     # print('asdf')
-    df1 = data.select(posexplode(col('posts.com')).alias('text'))
-    df2 = data.select(posexplode(col('posts.perspectives')).alias('label'))
+    df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
+    df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
     df1.show()
     df2.show()
 
