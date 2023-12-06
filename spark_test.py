@@ -38,6 +38,7 @@ def main(spark):
     # print('asdf')
 
     df1.show(10)
+    print(df1)
 
 
 # Only enter this block if we're in main
