@@ -45,7 +45,7 @@ def main(spark):
     df2 = with_column_index(df2)
     final = df1.join(df2, df1.ColumnIndex == df2.ColumnIndex, 'inner').drop("ColumnIndex").select('text', 'label')
     # extract labels from dictionary
-    test = final.select('label', get_json_object(final.label, '$.TOXICITY').alias('toxic_'), get_json_object(final.label, '$.SEVERE_TOXICITY').alias('severe_toxic_'),
+    test = final.select('text', 'label', get_json_object(final.label, '$.TOXICITY').alias('toxic_'), get_json_object(final.label, '$.SEVERE_TOXICITY').alias('severe_toxic_'),
                         get_json_object(final.label, '$.OBSCENE').alias('obscene_'), get_json_object(final.label, '$.INFLAMMATORY').alias('threat_'),
                         get_json_object(final.label, '$.INSULT').alias('insult_'), get_json_object(final.label, '$.PROFANITY').alias('identity_hate_'))
     # change null values to 0
@@ -55,6 +55,7 @@ def main(spark):
     test = test.withColumn("toxic", round(test["toxic_"]).cast('integer')).withColumn("severe_toxic", round(test["severe_toxic_"]).cast('integer'))\
         .withColumn("obscene", round(test["obscene_"]).cast('integer')).withColumn("insult", round(test["insult_"]).cast('integer'))\
         .withColumn("threat", floor(test["threat_"]).cast('integer')).withColumn("identity_hate", floor(test["identity_hate_"]).cast('integer'))
+    test = test.select('text', 'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
     test.show()
     # final.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
 
