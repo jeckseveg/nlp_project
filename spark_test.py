@@ -2,13 +2,15 @@ import sys
 
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
-import numpy as np
+from pyspark.sql.types import StructType, StructField, LongType
 
+def with_column_index(sdf):
+    new_schema = StructType(sdf.schema.fields + [StructField("ColumnIndex", LongType(), False),])
+    return sdf.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(schema=new_schema)
 
 def main(spark):
     data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
-    data.printSchema()
     # df1 = data.withColumn('text', explode(col('posts.com'))).withColumn('label', explode(col('posts.perspectives')))
     # df1.show()
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
@@ -39,9 +41,9 @@ def main(spark):
     # print('asdf')
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
     df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
-    df1 = df1.join(df2, df1.index==df2.index, 'inner')
+    df1 = df1.select('index')
     df1.show(10)
-    print(df1.tail(2))
+    print(df1)
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
