@@ -9,8 +9,8 @@ def main(spark):
     data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
-    df1 = data.withColumn('text', explode(col('posts.com'))).withColumn('label', explode(col('posts.perspectives')))
-    df1.show()
+    # df1 = data.withColumn('text', explode(col('posts.com'))).withColumn('label', explode(col('posts.perspectives')))
+    # df1.show()
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
     # data.createOrReplaceTempView('data')
     # # Filter out songs not in the top 500 most popular
@@ -37,9 +37,10 @@ def main(spark):
     # data.repartition(10000, 'recording_id')  # is partitionBy recording_msid necessary/useful?
     # data.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
     # print('asdf')
-    df1 = df1.select('text', 'label')
+    df1 = data.select(posexplode(col('posts.com')).alias('text'))
+    df2 = data.select(posexplode(col('posts.perspectives')).alias('label'))
     df1.show()
-
+    df2.show()
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
