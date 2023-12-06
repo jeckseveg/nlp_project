@@ -1,15 +1,26 @@
 import sys
 
-import pyspark.sql.functions as F
+from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 import numpy as np
 
 
 def main(spark):
-    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
+    data = spark.read.option("multiline","true").json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
-    data = spark.sql('SELECT com from data')
+    df1 = data.select(col("Images.*"))
+    # do df1.show() to see the output
+    # I am using Databricks so I do display(df1)
+
+    # Convert Columns to rows (Updated)
+    from itertools import chain
+
+    m = create_map(list(chain(*(
+        (lit(c), col(c)) for c in df1.columns))))
+
+    df2 = df1.withColumn('map', m) \
+        .select(explode('map')).drop('map')
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
     # data.createOrReplaceTempView('data')
     # # Filter out songs not in the top 500 most popular
@@ -37,7 +48,7 @@ def main(spark):
     # data.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
     # print('asdf')
 
-    data.show(10)
+    df2.show(10)
 
 
 # Only enter this block if we're in main
