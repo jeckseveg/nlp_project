@@ -9,7 +9,7 @@ def main(spark):
     data = spark.read.option("multiline","true").json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
-    df1 = data.select(col("Images.*"))
+    df1 = data.select(col("posts.*"))
     # do df1.show() to see the output
     # I am using Databricks so I do display(df1)
 
