@@ -38,7 +38,7 @@ def main(spark):
     # print('asdf')
 
     df1.show(10)
-    print(df1)
+    print(df1['com'])
 
 
 # Only enter this block if we're in main
