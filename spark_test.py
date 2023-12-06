@@ -42,8 +42,7 @@ def main(spark):
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
     df2 = data.select(posexplode(col('posts.perspectives')).alias('index', 'label'))
     df1 = df1.select('index')
-    df1.show(10)
-    print(df1)
+    df1.show(df1.count())
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
