@@ -9,7 +9,7 @@ def main(spark):
     data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
-    df1 = data.select(explode(col('posts.com')).alias('text'), explode(col('posts.perspectives')).alias('label'))
+    df1 = data.withColumn(explode(col('posts.com')).alias('text'), explode(col('posts.perspectives')).alias('label'))
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
     # data.createOrReplaceTempView('data')
     # # Filter out songs not in the top 500 most popular
