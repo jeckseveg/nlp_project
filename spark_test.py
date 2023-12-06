@@ -59,7 +59,8 @@ def main(spark):
     test = test.withColumn("label", array('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'))\
         .drop('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
     test.show()
-    # final.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
+    out_dir = '/scratch/yx1797/nlp_data/preprocessed_data'
+    test.write.json(out_dir, mode='overwrite')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
