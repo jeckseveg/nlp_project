@@ -9,18 +9,7 @@ def main(spark):
     data = spark.read.option("multiline","true").json('/scratch/yx1797/nlp_data/dataset/x0001.ndjson')
     data.createOrReplaceTempView('data')
     data.printSchema()
-    df1 = data.select(col("posts"))
-    # do df1.show() to see the output
-    # I am using Databricks so I do display(df1)
-
-    # Convert Columns to rows (Updated)
-    from itertools import chain
-
-    m = create_map(list(chain(*(
-        (lit(c), col(c)) for c in df1.columns))))
-
-    df2 = df1.withColumn('map', m) \
-        .select(explode('map')).drop('map')
+    df1 = spark.sql('SELECT posts.com from data')
     # data = spark.sql('SELECT user_id, recording_msid FROM data')
     # data.createOrReplaceTempView('data')
     # # Filter out songs not in the top 500 most popular
@@ -48,7 +37,7 @@ def main(spark):
     # data.write.mode("overwrite").parquet(f'hdfs:/user/yx1797_nyu_edu/test.parquet')
     # print('asdf')
 
-    df2.show(10)
+    df1.show(10)
 
 
 # Only enter this block if we're in main
