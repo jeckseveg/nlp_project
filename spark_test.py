@@ -9,7 +9,7 @@ def with_column_index(sdf):
     return sdf.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(schema=new_schema)
 
 def main(spark):
-    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x*.ndjson')
+    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x00*.ndjson')
     data.createOrReplaceTempView('data')
     print('Getting data...')
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
