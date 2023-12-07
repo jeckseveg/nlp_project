@@ -1,5 +1,5 @@
 import sys
-
+import argparse
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, LongType
@@ -8,8 +8,9 @@ def with_column_index(sdf):
     new_schema = StructType(sdf.schema.fields + [StructField("ColumnIndex", LongType(), False),])
     return sdf.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(schema=new_schema)
 
-def main(spark):
-    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x00*.ndjson')
+def main(spark, args):
+    suffix = str(args.folder)
+    data = spark.read.json('/scratch/yx1797/nlp_data/dataset/x'+suffix+'*.ndjson')
     data.createOrReplaceTempView('data')
     print('Getting data...')
     df1 = data.select(posexplode(col('posts.com')).alias('index', 'text'))
@@ -34,7 +35,7 @@ def main(spark):
     test = test.withColumn("label", array('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'))\
         .drop('toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate')
     test.show()
-    out_dir = '/scratch/yx1797/nlp_data/preprocessed_data'
+    out_dir = '/scratch/yx1797/nlp_data/preprocessed_data/pre'+suffix
     print('Writing data...')
     test.write.json(out_dir, mode='overwrite')
 
@@ -42,4 +43,7 @@ def main(spark):
 if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('part2').getOrCreate()
-    main(spark)
+    parser = argparse.ArgumentParser(description="suffix to process and save out [00-33]")
+    parser.add_argument("--folder", type=str, default='00', help="first two digits of the numerical part of the json file")
+    args = parser.parse_args()
+    main(spark, args)
