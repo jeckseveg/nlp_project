@@ -28,7 +28,7 @@ def main(args):
     val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size)
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
-
+    print('model loaded, starting training...')
     # create and train model
     model = ToxicClassifier()
     trainer = pl.Trainer(max_epochs=args.epochs)
