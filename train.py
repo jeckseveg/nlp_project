@@ -2,6 +2,7 @@ from model import ToxicClassifier
 import pytorch_lightning as pl
 from data_util import *
 import argparse
+from main_dataloader import JSONDataset, ShuffleDataset
 
 
 def main(args):
@@ -18,15 +19,19 @@ def main(args):
     del(train_dataset);del(val_dataset)
 
     # 4chan
-    '''train_dataset = JigsawDataset('data/jigsaw_train.csv')
-    val_dataset = JigsawDataset('data/jigsaw_train.csv')
-    train_dataloader = DataLoader(train_dataset,batch_size=args.batch_size)
-    val_dataloader = DataLoader(val_dataset,batch_size=args.batch_size)'''
+    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
+    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
+    train_dataset = JSONDataset(train_path, chunkSize=1000)
+    train_dataset = ShuffleDataset(train_dataset, buffer_size=1024)
+    val_dataset = JSONDataset(val_path, chunkSize=1000)
+    val_dataset = ShuffleDataset(val_dataset, buffer_size=1024)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
 
     # create and train model
     model = ToxicClassifier()
     trainer = pl.Trainer(max_epochs=args.epochs)
-    trainer.fit(model,val_dataloader,val_dataloader)
+    trainer.fit(model,train_dataloader,val_dataloader)
 
     # free memory
     #del(train_dataloader);del(val_dataloader)

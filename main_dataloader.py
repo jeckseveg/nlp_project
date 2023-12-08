@@ -1,28 +1,46 @@
 import pandas as pd
-import nump as np
+import numpy as np
+import random
+import torch
 from torch.utils.data import DataLoader, IterableDataset
 
 
-class ChunkDataset(IterableDataset):
-    def __init__(self, file_paths):
-        super(ChunkDataset).__init__()
-        self.file_paths = file_paths
-        self.dataset_size = 0
-        for file_path in file_paths:
-            self.dataset_size += len(pd.read_parquet(file_path))
-
-    def __len__(self):
-        return self.dataset_size
+class JSONDataset(IterableDataset):
+    def __init__(self, file_path, chunkSize=1000):
+        self.file_path = file_path
+        self.chunksize = chunkSize
 
     def __iter__(self):
-        worker_info = torch.utils.data.get_worker_info()
-        if worker_info is None:
-            return ChunkDatasetIterator(self.file_paths)
-        else:
-            return ChunkDatasetIterator(
-                [elem for ind, elem in enumerate(self.file_paths) if (ind % worker_info.num_workers) == worker_info.id])
-    def __getitem__(self, index):
-        data = self.reader.get_chunk(self.chunksize)
-        inputs = data['text']
-        labels = data['label']
-        return (inputs, labels)
+        reader = pd.read_json(self.file_path, lines=True, chunksize=self.chunksize)
+        for chunk in reader:
+            yield (chunk['text'], chunk['label'])
+
+
+class ShuffleDataset(IterableDataset):
+    def __init__(self, dataset, buffer_size):
+        super().__init__()
+        self.dataset = dataset
+        self.buffer_size = buffer_size
+
+    def __iter__(self):
+        shufbuf = []
+        try:
+            dataset_iter = iter(self.dataset)
+            for i in range(self.buffer_size):
+                shufbuf.append(next(dataset_iter))
+        except:
+            self.buffer_size = len(shufbuf)
+
+        try:
+            while True:
+                try:
+                    item = next(dataset_iter)
+                    evict_idx = random.randint(0, self.buffer_size - 1)
+                    yield shufbuf[evict_idx]
+                    shufbuf[evict_idx] = item
+                except StopIteration:
+                    break
+            while len(shufbuf) > 0:
+                yield shufbuf.pop()
+        except GeneratorExit:
+            pass
