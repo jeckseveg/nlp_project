@@ -11,6 +11,7 @@ def to_null(c):
 
 def main(spark):
     path = '/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/*.json'
+    write_path = '/scratch/yx1797/nlp_data/preprocessed_data/preprocessed_new'
     files = glob.glob(path)
     print(files)
     for file in files:
@@ -21,7 +22,7 @@ def main(spark):
         data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
         # data.show()
         print('Writing data...')
-        data.write.json(file, mode='overwrite')
+        data.write.json(write_path, mode='overwrite')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
