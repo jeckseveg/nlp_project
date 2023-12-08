@@ -13,8 +13,7 @@ class JSONDataset(IterableDataset):
     def __iter__(self):
         reader = pd.read_json(self.file_path, lines=True, chunksize=self.chunksize)
         for chunk in reader:
-            print(chunk['text'].values.dtype, chunk['label'].values.dtype)
-            yield (chunk['text'].values, chunk['label'].values)
+            yield (np.asarray(chunk['text'].values), np.asarray(chunk['label'].values))
 
 
 class ShuffleDataset(IterableDataset):
