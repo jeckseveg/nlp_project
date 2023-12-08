@@ -19,6 +19,7 @@ def main(spark):
         data.createOrReplaceTempView('data')
         print('Removing null or empty values...')
         data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
+        data.show()
         print('Writing data...')
         # data.write.json(file, mode='overwrite')
 
