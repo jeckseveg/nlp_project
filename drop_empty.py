@@ -18,7 +18,7 @@ def main(spark):
         data = spark.read.json(file)
         data.createOrReplaceTempView('data')
         print('Removing null or empty values...')
-        data = data.select([to_null(data.text).alias(data.text)]).na.drop()
+        data = data.select([to_null('text').alias('text')]).na.drop()
         data.show()
         print('Writing data...')
         # data.write.json(file, mode='overwrite')
