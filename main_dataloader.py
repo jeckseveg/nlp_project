@@ -13,7 +13,7 @@ class JSONDataset(IterableDataset):
     def __iter__(self):
         reader = pd.read_json(self.file_path, lines=True, chunksize=self.chunksize)
         for chunk in reader:
-            print(chunk['label'].values[0])
+            print(chunk['text'].values[0], chunk['label'].values[0])
             yield (chunk['text'].values, chunk['label'].values)
 
 
