@@ -12,6 +12,7 @@ def to_null(c):
 def main(spark):
     path = '/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/*.json'
     files = glob.glob(path)
+    print(files)
     for file in files:
         print('Getting data...')
         data = spark.read.json(file)
