@@ -35,8 +35,8 @@ def main(spark, args):
     train.show()
     val.show()
     print('Writing data to folder '+prefix+'...')
-    train.coalesce(1).write.csv(train_path, mode='append', header=True)
-    val.coalesce(1).write.csv(val_path, mode='append', header=True)
+    train.coalesce(1).write.json(train_path, mode='overwrite')
+    val.coalesce(1).write.json(val_path, mode='overwrite')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
