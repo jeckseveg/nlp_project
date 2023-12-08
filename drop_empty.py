@@ -1,7 +1,7 @@
 import sys
 import glob
 from pyspark.sql.functions import *
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, Window
 from pyspark.sql.types import StructType, StructField, LongType
 
 
@@ -9,20 +9,28 @@ def to_null(c):
     return when(~(col(c).isNull() | isnan(col(c)) | (trim(col(c)) == "")), col(c))
 
 
+def with_column_index(sdf):
+    new_schema = StructType(sdf.schema.fields + [StructField("ColumnIndex", LongType(), False),])
+    return sdf.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(schema=new_schema)
+
+
 def main(spark):
-    path = '/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/*.json'
-    write_path = '/scratch/yx1797/nlp_data/preprocessed_data/preprocessed_new'
-    files = glob.glob(path)
-    print(files)
-    for file in files:
-        print('Getting data...')
-        data = spark.read.json(file)
-        data.createOrReplaceTempView('data')
-        print('Removing null or empty values...')
-        data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
-        # data.show()
-        print('Writing data...')
-        data.write.json(write_path, mode='overwrite')
+    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train'
+    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val'
+    print('Getting data...')
+    data = spark.read.json('/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/*.json')
+    data.createOrReplaceTempView('data')
+    print('Removing null or empty values...')
+    data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
+    data = with_column_index(data)
+    window = Window.partitionBy(data['ColumnIndex']).orderBy(rand(seed=42))
+    train = data.select('*', F.percent_rank().over(window).alias('rank')).filter(F.col('rank') < 0.8).drop('rank')
+    val = data.select('*', F.percent_rank().over(window).alias('rank')).filter(F.col('rank') >= 0.8).drop('rank')
+    data.show()
+    train.show()
+    val.show()
+    # print('Writing data...')
+    # data.write.json(write_path, mode='overwrite')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
