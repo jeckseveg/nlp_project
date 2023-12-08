@@ -19,6 +19,7 @@ def main(args):
     del(train_dataset);del(val_dataset)
 
     # 4chan
+    # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
     train_dataset = JSONDataset(train_path, chunkSize=1000)
@@ -37,20 +38,20 @@ def main(args):
     #del(train_dataloader);del(val_dataloader)
 
     # jigsaw test data
-    jigsaw_test_dataset = JigsawDataset('data/jigsaw_test.csv')
-    jigsaw_test_dataloader = DataLoader(Subset(jigsaw_test_dataset,range(150)),batch_size=args.batch_size)
+    # jigsaw_test_dataset = JigsawDataset('data/jigsaw_test.csv')
+    # jigsaw_test_dataloader = DataLoader(Subset(jigsaw_test_dataset,range(150)),batch_size=args.batch_size)
 
     # 4chan test data
-    '''fourchan_test_dataset = JigsawDataset('data/jigsaw_test.csv')
-    fourchan_test_dataloader = DataLoader(val_dataset,batch_size=args.batch_size)'''
+    fourchan_test_dataset = JSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00001/part-00000-4c419c7a-be9d-460c-8e35-46326dd66922-c000.json', chunkSize=1000)
+    fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size)
 
     # youtube test evaluation
-    youtube_test_dataset = YoutubeDataset('data/youtube_test.csv')
-    youtube_test_dataloader = DataLoader(Subset(youtube_test_dataset,range(150)),batch_size=args.batch_size)
+    # youtube_test_dataset = YoutubeDataset('data/youtube_test.csv')
+    # youtube_test_dataloader = DataLoader(Subset(youtube_test_dataset,range(150)),batch_size=args.batch_size)
 
-    trainer.test(model, jigsaw_test_dataloader)
-    #trainer.test(model, fourchan_test_dataloader)
-    trainer.test(model, youtube_test_dataloader)
+    # trainer.test(model, jigsaw_test_dataloader)
+    trainer.test(model, fourchan_test_dataloader)
+    # trainer.test(model, youtube_test_dataloader)
     
     return
 
