@@ -17,8 +17,8 @@ def with_column_index(sdf):
 
 def main(spark, args):
     prefix = str(args.folder)
-    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train'
-    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val'
+    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/'+prefix
+    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/'+prefix
     print('Getting data...')
     data = spark.read.json('/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/'+prefix+'*.json')
     data.createOrReplaceTempView('data')
