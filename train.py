@@ -31,7 +31,7 @@ def main(args):
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
     elapsed_time = time.time()-t1
     print('model loaded in', elapsed_time, 'seconds, starting training...')
-    print(next(val_dataloader))
+    print(next(iter(val_dataloader)))
     # create and train model
     model = ToxicClassifier()
     trainer = pl.Trainer(max_epochs=args.epochs)
