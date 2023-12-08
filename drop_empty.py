@@ -22,18 +22,21 @@ def main(spark, args):
     print('Getting data...')
     data = spark.read.json('/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/'+prefix+'*.json')
     data.createOrReplaceTempView('data')
+    # remove null/empty values
     print('Removing null or empty values...')
     data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
+    data = data.orderBy('text').orderBy(rand(seed=42))
+    # now that df is ordered randomly, generate indicies for random order
     data = with_column_index(data)
-    window = Window.partitionBy(data['ColumnIndex']).orderBy(rand(seed=42))
+    window = Window.orderBy('ColumnIndex')
     train = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') < 0.8).drop('rank').drop('ColumnIndex')
     val = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') >= 0.8).drop('rank').drop('ColumnIndex')
     data.show()
     train.show()
     val.show()
     print('Writing data...')
-    train.write.options(header='True', delimiter=',').mode("overwrite").csv(train_path)
-    val.write.options(header='True', delimiter=',').mode("overwrite").csv(val_path)
+    train.coalesce(1).write.options(header='True', delimiter=',').csv(train_path)
+    val.coalesce(1).write.options(header='True', delimiter=',').csv(val_path)
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
