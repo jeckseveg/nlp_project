@@ -18,10 +18,10 @@ def main(spark):
         data = spark.read.json(file)
         data.createOrReplaceTempView('data')
         print('Removing null or empty values...')
-        data = data.select([to_null(c).alias(c) for c in data.columns]).na.drop()
+        data = data.select([to_null(data.text).alias(data.text)]).na.drop()
         data.show()
         print('Writing data...')
-        data.write.json(file, mode='overwrite')
+        # data.write.json(file, mode='overwrite')
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
