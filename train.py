@@ -27,8 +27,8 @@ def main(args):
     train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
     val_dataset = JSONDataset(val_path, chunkSize=500)
     val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size)
-    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
+    train_dataloader = DataLoader(train_dataset, collate_fn=None, batch_size=args.batch_size)
+    val_dataloader = DataLoader(val_dataset, collate_fn=None, batch_size=args.batch_size)
     elapsed_time = time.time()-t1
     print('model loaded in', elapsed_time, 'seconds, starting training...')
     print(next(iter(val_dataloader)))
