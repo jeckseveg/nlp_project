@@ -34,9 +34,9 @@ def main(spark, args):
     data.show()
     train.show()
     val.show()
-    print('Writing data...')
-    train.coalesce(1).write.options(header='True', delimiter=',').csv(train_path)
-    val.coalesce(1).write.options(header='True', delimiter=',').csv(val_path)
+    print('Writing data to folder '+prefix+'...')
+    train.coalesce(1).write.csv(train_path, mode='append', header=True)
+    val.coalesce(1).write.csv(val_path, mode='append', header=True)
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
