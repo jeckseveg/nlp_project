@@ -2,13 +2,14 @@ from model import ToxicClassifier
 import pytorch_lightning as pl
 from data_util import *
 import argparse
+import time
 from main_dataloader import JSONDataset, ShuffleDataset
 
 
 def main(args):
     # dataset construction
     print("loading {args.dataset} data...")
-
+    t1 = time.time()
     # jigsaw
     # train_dataset = JigsawDataset('data/jigsaw_test.csv')
     # val_dataset = JigsawDataset('data/jigsaw_test.csv')
@@ -28,7 +29,8 @@ def main(args):
     val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size)
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
-    print('model loaded, starting training...')
+    elapsed_time = time.time()-t1
+    print('model loaded in', elapsed_time, 'seconds, starting training...')
     # create and train model
     model = ToxicClassifier()
     trainer = pl.Trainer(max_epochs=args.epochs)
