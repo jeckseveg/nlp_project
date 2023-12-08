@@ -24,14 +24,14 @@ def main(spark):
     data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
     data = with_column_index(data)
     window = Window.partitionBy(data['ColumnIndex']).orderBy(rand(seed=42))
-    train = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') < 0.8).drop('rank')
-    val = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') >= 0.8).drop('rank')
+    train = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') < 0.8).drop('rank').drop('ColumnIndex')
+    val = data.select('*', percent_rank().over(window).alias('rank')).filter(col('rank') >= 0.8).drop('rank').drop('ColumnIndex')
     data.show()
     train.show()
     val.show()
     print('Writing data...')
-    train.write.mode("overwrite").json(train_path)
-    val.write.mode("overwrite").parquet(val_path)
+    train.write.options(header='True', delimiter=',').mode("overwrite").csv(train_path)
+    val.write.options(header='True', delimiter=',').mode("overwrite").csv(val_path)
 
 # Only enter this block if we're in main
 if __name__ == "__main__":
