@@ -1,5 +1,6 @@
 import sys
 import glob
+import argparse
 from pyspark.sql.functions import *
 from pyspark.sql import SparkSession, Window
 from pyspark.sql.types import StructType, StructField, LongType
@@ -14,11 +15,12 @@ def with_column_index(sdf):
     return sdf.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(schema=new_schema)
 
 
-def main(spark):
+def main(spark, args):
+    prefix = str(args.folder)
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val'
     print('Getting data...')
-    data = spark.read.json('/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/*.json')
+    data = spark.read.json('/scratch/yx1797/nlp_data/preprocessed_data/preprocessed/'+prefix+'*.json')
     data.createOrReplaceTempView('data')
     print('Removing null or empty values...')
     data = data.select([to_null('text').alias('text'), col('label')]).na.drop()
@@ -37,4 +39,7 @@ def main(spark):
 if __name__ == "__main__":
     # Create the spark session object
     spark = SparkSession.builder.appName('part2').getOrCreate()
-    main(spark)
+    parser = argparse.ArgumentParser(description="prefix to process and save out")
+    parser.add_argument("--folder", type=str, default='part-00000', help="prefix of the json file")
+    args = parser.parse_args()
+    main(spark, args)
