@@ -10,22 +10,22 @@ def main(args):
     print("loading {args.dataset} data...")
 
     # jigsaw
-    train_dataset = JigsawDataset('data/jigsaw_test.csv')
-    val_dataset = JigsawDataset('data/jigsaw_test.csv')
-    train_dataloader = DataLoader(Subset(train_dataset,range(150)),batch_size=args.batch_size)
-    val_dataloader = DataLoader(Subset(val_dataset,range(150)),batch_size=args.batch_size)
-    
-    # free memory 
-    del(train_dataset);del(val_dataset)
+    # train_dataset = JigsawDataset('data/jigsaw_test.csv')
+    # val_dataset = JigsawDataset('data/jigsaw_test.csv')
+    # train_dataloader = DataLoader(Subset(train_dataset,range(150)),batch_size=args.batch_size)
+    # val_dataloader = DataLoader(Subset(val_dataset,range(150)),batch_size=args.batch_size)
+    #
+    # # free memory
+    # del(train_dataset);del(val_dataset)
 
     # 4chan
     # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
-    train_dataset = JSONDataset(train_path, chunkSize=1000)
-    train_dataset = ShuffleDataset(train_dataset, buffer_size=1024)
-    val_dataset = JSONDataset(val_path, chunkSize=1000)
-    val_dataset = ShuffleDataset(val_dataset, buffer_size=1024)
+    train_dataset = JSONDataset(train_path, chunkSize=500)
+    train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
+    val_dataset = JSONDataset(val_path, chunkSize=500)
+    val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
     train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size)
     val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
 
