@@ -30,16 +30,19 @@ def main(args):
     # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
+
+    # # use IterableDataset if we are training over the entire dataset, due to memory constraints
     # train_dataset = JSONDataset(train_path, chunkSize=500)
     # train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
     # val_dataset = JSONDataset(val_path, chunkSize=500)
     # val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
 
+    # if using dataset subset, use regular Dataset
     train_dataset = SmallJSONDataset(train_path)
     val_dataset = SmallJSONDataset(val_path)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=4, shuffle=True, collate_fn=coll_fn)
-    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, num_workers=4, collate_fn=coll_fn)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, num_workers=2, shuffle=True, collate_fn=coll_fn)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, num_workers=2, collate_fn=coll_fn)
     elapsed_time = time.time()-t1
     print('Loaded in', elapsed_time, 'seconds, starting training...')
     # create and train model
@@ -56,7 +59,7 @@ def main(args):
 
     # 4chan test data
     fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json')
-    fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size, num_workers=4, collate_fn=coll_fn)
+    fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size, num_workers=2, collate_fn=coll_fn)
 
     # youtube test evaluation
     # youtube_test_dataset = YoutubeDataset('data/youtube_test.csv')
