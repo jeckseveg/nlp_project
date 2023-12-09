@@ -10,7 +10,11 @@ def coll_fn(data):
     # data format: list of tuples in format (text, label)
     # where text is a string and label is a list of ints/bools (1s and 0s)
     text = np.asarray([str(tup[0]) for tup in data])
+    print(text.shape)
+    print(text.dtype)
     label = np.asarray([np.asarray(tup[1]) for tup in data])
+    print(label.shape)
+    print(label.dtype)
     return text, label
 
 def main(args):
