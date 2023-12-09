@@ -30,8 +30,7 @@ class ToxicClassifier(pl.LightningModule):
 
     def format_output(self, label, output):
         # logic for different datasets
-        print(label)
-        if label.shape[1] == 4: # youtube
+        if np.asarray(label).shape[1] == 4: # youtube
             output = output[:,[0,2,3,5]]
         return output
 
