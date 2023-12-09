@@ -15,6 +15,8 @@ def coll_fn(data):
 
 def main(args):
     # dataset construction
+    test = ['cat', 'dog']
+    print(test)
     print("loading {args.dataset} data...")
     t1 = time.time()
     # jigsaw
