@@ -49,7 +49,7 @@ def main(args):
     # jigsaw_test_dataloader = DataLoader(Subset(jigsaw_test_dataset,range(150)),batch_size=args.batch_size)
 
     # 4chan test data
-    fourchan_test_dataset = JSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json', chunkSize=1000)
+    fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json')
     fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size)
 
     # youtube test evaluation
