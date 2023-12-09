@@ -24,7 +24,6 @@ class ToxicClassifier(pl.LightningModule):
         self.bias_loss = False
 
     def forward(self, x):
-        print('VECTOR SHAPE', x.shape)
         inputs = self.tokenizer(x, return_tensors="pt", truncation=True, padding=True).to(self.model.device)
         output = self.model(**inputs)[0]
         return output[:,:6]
