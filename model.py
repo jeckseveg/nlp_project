@@ -25,7 +25,6 @@ class ToxicClassifier(pl.LightningModule):
 
     def forward(self, x):
         x = [str(ele) for ele in x]
-        print(x)
         inputs = self.tokenizer(x, return_tensors="pt", truncation=True, padding=True).to(self.model.device)
         output = self.model(**inputs)[0]
         return output[:,:6]
