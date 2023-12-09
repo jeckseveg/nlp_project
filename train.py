@@ -15,27 +15,13 @@ def coll_fn(data):
 
 def main(args):
     # dataset construction
-    print("loading {args.dataset} data...")
+    print("loading 4chan data...")
     t1 = time.time()
-    # jigsaw
-    # train_dataset = JigsawDataset('data/jigsaw_test.csv')
-    # val_dataset = JigsawDataset('data/jigsaw_test.csv')
-    # train_dataloader = DataLoader(Subset(train_dataset,range(150)),batch_size=args.batch_size)
-    # val_dataloader = DataLoader(Subset(val_dataset,range(150)),batch_size=args.batch_size)
-    #
-    # # free memory
-    # del(train_dataset);del(val_dataset)
 
     # 4chan
     # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
-
-    # # use IterableDataset if we are training over the entire dataset, due to memory constraints
-    # train_dataset = JSONDataset(train_path, chunkSize=500)
-    # train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
-    # val_dataset = JSONDataset(val_path, chunkSize=500)
-    # val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
 
     # if using dataset subset, use regular Dataset
     train_dataset = SmallJSONDataset(train_path)
@@ -47,6 +33,12 @@ def main(args):
     print('Loaded in', elapsed_time, 'seconds, starting training...')
     # create and train model
     model = ToxicClassifier()
+    
+    # freeze non-classifier parameters
+    for name, param in model.named_parameters():
+        if 'classifier' not in name:
+            param.requires_grad = False
+            
     trainer = pl.Trainer(max_epochs=args.epochs)
     trainer.fit(model,train_dataloader,val_dataloader)
 
@@ -56,6 +48,7 @@ def main(args):
     # jigsaw test data
     # jigsaw_test_dataset = JigsawDataset('data/jigsaw_test.csv')
     # jigsaw_test_dataloader = DataLoader(Subset(jigsaw_test_dataset,range(150)),batch_size=args.batch_size)
+    # jigsaw_test_dataloader = DataLoader(jigsaw_test_dataset,batch_size=args.batch_size)
 
     # 4chan test data
     fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json')
@@ -64,6 +57,7 @@ def main(args):
     # youtube test evaluation
     # youtube_test_dataset = YoutubeDataset('data/youtube_test.csv')
     # youtube_test_dataloader = DataLoader(Subset(youtube_test_dataset,range(150)),batch_size=args.batch_size)
+    # youtube_test_dataloader = DataLoader(youtube_test_dataset,batch_size=args.batch_size)
 
     # trainer.test(model, jigsaw_test_dataloader)
     trainer.test(model, fourchan_test_dataloader)
