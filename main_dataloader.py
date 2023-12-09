@@ -51,7 +51,7 @@ class SmallJSONDataset(Dataset):
         # essentially we want output to be: ("string with comment text",[one hot vector of target labels])
         df = pd.read_json(input_file, lines=True)
         self.comments = df['text'].to_numpy()
-        self.labels = torch.as_tensor(df['label'].to_numpy())
+        self.labels = np.asarray([np.asarray(l) for l in df['label']])
 
     def __len__(self):
         return len(self.comments)
