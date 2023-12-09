@@ -50,8 +50,8 @@ class SmallJSONDataset(Dataset):
     def __init__(self, input_file):
         # essentially we want output to be: ("string with comment text",[one hot vector of target labels])
         df = pd.read_json(input_file, lines=True)
-        self.comments = df['text'].values
-        self.labels = df['label'].values
+        self.comments = df['text'].to_numpy()
+        self.labels = df['label'].to_numpy()
 
     def __len__(self):
         return len(self.comments)
