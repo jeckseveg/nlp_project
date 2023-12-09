@@ -6,6 +6,13 @@ import time
 from main_dataloader import JSONDataset, ShuffleDataset, SmallJSONDataset
 
 
+def coll_fn(data):
+    # data format: list of tuples in format (text, label)
+    # where text is a string and label is a list of ints/bools (1s and 0s)
+    text = np.asarray([tup[0] for tup in data])
+    label = np.asarray([np.asarray(tup[1]) for tup in data])
+    return text, label
+
 def main(args):
     # dataset construction
     print("loading {args.dataset} data...")
@@ -31,8 +38,8 @@ def main(args):
     train_dataset = SmallJSONDataset(train_path)
     val_dataset = SmallJSONDataset(val_path)
 
-    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=coll_fn)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size, collate_fn=coll_fn)
     elapsed_time = time.time()-t1
     print('Loaded in', elapsed_time, 'seconds, starting training...')
     # create and train model
@@ -49,7 +56,7 @@ def main(args):
 
     # 4chan test data
     fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json')
-    fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size)
+    fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size, collate_fn=coll_fn)
 
     # youtube test evaluation
     # youtube_test_dataset = YoutubeDataset('data/youtube_test.csv')
