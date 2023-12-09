@@ -44,7 +44,6 @@ def main(args):
     print('Loaded in', elapsed_time, 'seconds, starting training...')
     # create and train model
     model = ToxicClassifier()
-    print(next(iter(val_dataloader)))
     trainer = pl.Trainer(max_epochs=args.epochs)
     trainer.fit(model,train_dataloader,val_dataloader)
 
