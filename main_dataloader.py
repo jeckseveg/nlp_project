@@ -2,7 +2,7 @@ import pandas as pd
 import random
 import numpy as np
 import torch
-from torch.utils.data import DataLoader, IterableDataset
+from torch.utils.data import DataLoader, IterableDataset, Dataset
 
 
 class JSONDataset(IterableDataset):
@@ -44,3 +44,17 @@ class ShuffleDataset(IterableDataset):
                 yield shufbuf.pop()
         except GeneratorExit:
             pass
+
+
+class SmallJSONDataset(Dataset):
+    def __init__(self, input_file):
+        # essentially we want output to be: ("string with comment text",[one hot vector of target labels])
+        df = pd.read_json(input_file, lines=True)
+        self.comments = df['text'].values
+        self.labels = df['label'].values
+
+    def __len__(self):
+        return len(self.comments)
+
+    def __getitem__(self, idx):
+        return (self.comments[idx], self.labels[idx])

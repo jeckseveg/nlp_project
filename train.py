@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 from data_util import *
 import argparse
 import time
-from main_dataloader import JSONDataset, ShuffleDataset
+from main_dataloader import JSONDataset, ShuffleDataset, SmallJSONDataset
 
 
 def main(args):
@@ -23,14 +23,18 @@ def main(args):
     # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
     train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/part-00000-56ad4068-8675-445b-9ca4-d6796b1c0f09-c000.json'
     val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/part-00000-22543349-0a64-4c5d-8151-540283a3d07d-c000.json'
-    train_dataset = JSONDataset(train_path, chunkSize=500)
-    train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
-    val_dataset = JSONDataset(val_path, chunkSize=500)
-    val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
-    train_dataloader = DataLoader(train_dataset, collate_fn=None, batch_size=args.batch_size)
-    val_dataloader = DataLoader(val_dataset, collate_fn=None, batch_size=args.batch_size)
+    # train_dataset = JSONDataset(train_path, chunkSize=500)
+    # train_dataset = ShuffleDataset(train_dataset, buffer_size=500)
+    # val_dataset = JSONDataset(val_path, chunkSize=500)
+    # val_dataset = ShuffleDataset(val_dataset, buffer_size=500)
+
+    train_dataset = SmallJSONDataset(train_path)
+    val_dataset = SmallJSONDataset(val_path)
+
+    train_dataloader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=args.batch_size)
     elapsed_time = time.time()-t1
-    print('model loaded in', elapsed_time, 'seconds, starting training...')
+    print('Loaded in', elapsed_time, 'seconds, starting training...')
     print(next(iter(val_dataloader)))
     # create and train model
     model = ToxicClassifier()
@@ -45,7 +49,7 @@ def main(args):
     # jigsaw_test_dataloader = DataLoader(Subset(jigsaw_test_dataset,range(150)),batch_size=args.batch_size)
 
     # 4chan test data
-    fourchan_test_dataset = JSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00001/part-00000-4c419c7a-be9d-460c-8e35-46326dd66922-c000.json', chunkSize=1000)
+    fourchan_test_dataset = JSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json', chunkSize=1000)
     fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size)
 
     # youtube test evaluation
