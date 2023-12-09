@@ -51,7 +51,7 @@ def main(args):
     # jigsaw_test_dataloader = DataLoader(jigsaw_test_dataset,batch_size=args.batch_size)
 
     # 4chan test data
-    fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/part-00000-bacfba4e-4789-4205-91bf-98be29e6cbc1-c000.json')
+    fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/250K.json')
     fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=coll_fn)
 
     # youtube test evaluation
