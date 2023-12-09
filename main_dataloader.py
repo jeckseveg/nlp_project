@@ -51,7 +51,7 @@ class SmallJSONDataset(Dataset):
         # essentially we want output to be: ("string with comment text",[one hot vector of target labels])
         df = pd.read_json(input_file, lines=True)
         self.comments = df['text'].values
-        print(self.comments)
+        print(self.comments[0])
         # self.labels = np.asarray([np.asarray(l) for l in df['label'].values])
         self.labels = df['label'].values
 
