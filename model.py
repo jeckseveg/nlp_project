@@ -39,13 +39,6 @@ class ToxicClassifier(pl.LightningModule):
         x, label = batch
         output = self.forward(x)
         output = self.format_output(label, output)
-        print(x)
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        print(label)
-        print('###############################')
-        print(output)
-        if torch.isnan(output).any():
-            raise SystemError
         loss = self.binary_cross_entropy(output, label)
         self.log("train_loss", loss, on_epoch=True)
         return {"loss": loss}
