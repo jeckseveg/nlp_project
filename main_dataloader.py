@@ -53,6 +53,7 @@ class SmallJSONDataset(Dataset):
         # drop rows where label contains nan
         nan_index = []
         for i, row in enumerate(df.itertuples()):
+            print(row.label[0])
             if np.isnan(row.label[0]):
                 print(row.label)
                 nan_index.append(i)
