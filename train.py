@@ -12,7 +12,9 @@ def coll_fn(data):
     text = np.asarray([tup[0] for tup in data])
     label = torch.from_numpy(np.vstack(np.asarray([np.asarray(tup[1]) for tup in data])).astype(float))
     if torch.isnan(label).any():
+        print('#############################################')
         print(label)
+        raise SystemError
     return text, label
 
 def main(args):
