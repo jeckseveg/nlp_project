@@ -53,8 +53,8 @@ class SmallJSONDataset(Dataset):
         # drop rows where label contains nan
         nan_index = []
         for i, row in enumerate(df.itertuples()):
-            print(row.label)
-            if any(each!=each for each in row.label):
+            if row.label[0] != row.label[0]:
+                print(row.label)
                 nan_index.append(i)
         df = df.drop(index=nan_index)
         self.comments = df['text'].astype('string').values
