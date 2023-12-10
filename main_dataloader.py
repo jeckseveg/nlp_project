@@ -50,6 +50,8 @@ class SmallJSONDataset(Dataset):
     def __init__(self, input_file):
         # essentially we want output to be: ("string with comment text",[one hot vector of target labels])
         df = pd.read_json(input_file, lines=True)
+        # drop rows where label contains nan
+        df = df[~df['label'].apply(lambda row: np.isnan(row).any())]
         self.comments = df['text'].astype('string').values
         # self.labels = np.asarray([np.asarray(l) for l in df['label'].values])
         self.labels = df['label'].values
