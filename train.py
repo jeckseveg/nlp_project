@@ -11,7 +11,7 @@ def coll_fn(data):
     # where text is a string and label is a list of ints/bools (1s and 0s)
     text = np.asarray([tup[0] for tup in data])
     label = torch.from_numpy(np.vstack(np.asarray([np.asarray(tup[1]) for tup in data])).astype(float))
-    if torch.isnan(label):
+    if torch.isnan(label).any():
         print(label)
     return text, label
 
