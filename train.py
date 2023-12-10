@@ -20,8 +20,8 @@ def main(args):
 
     # 4chan
     # the train/val paths given below are for approximately 1/15th of the overall dataset, will update to full dataset when available
-    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/10K.json'
-    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/2K.json'
+    train_path = '/scratch/yx1797/nlp_data/preprocessed_data/train/part-00000/1M.json'
+    val_path = '/scratch/yx1797/nlp_data/preprocessed_data/val/part-00000/250K.json'
 
     # if using dataset subset, use regular Dataset
     train_dataset = SmallJSONDataset(train_path)
@@ -51,7 +51,7 @@ def main(args):
     # jigsaw_test_dataloader = DataLoader(jigsaw_test_dataset,batch_size=args.batch_size)
 
     # 4chan test data
-    fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/2K.json')
+    fourchan_test_dataset = SmallJSONDataset('/scratch/yx1797/nlp_data/preprocessed_data/val/part-00015/6K.json')
     fourchan_test_dataloader = DataLoader(fourchan_test_dataset, batch_size=args.batch_size, num_workers=args.num_workers, collate_fn=coll_fn)
 
     # youtube test evaluation
